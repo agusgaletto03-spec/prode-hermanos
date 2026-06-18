@@ -781,13 +781,13 @@ function syncFromFirebase() {
     // Restore | in manualResults keys (Firebase uses __ instead)
     const rawManual = data.manualResults || {};
     state.manualResults = {};
-    Object.entries(rawManual).forEach(([k,v]) => { state.manualResults[k.replace(/__/g, '|')] = v; });
+    Object.entries(rawManual).forEach(([k,v]) => { state.manualResults[k.replace(/___PIPE___/g, '|')] = v; });
     state.adminReopened = data.adminReopened || false;
     // Load API results from Firebase if available (persists across devices)
     if (data.apiResults && Object.keys(data.apiResults).length > 0) {
       const restored = {};
       Object.entries(data.apiResults).forEach(([k,v]) => {
-        restored[k.replace(/__/g, '|')] = v; // restore | from __
+        restored[k.replace(/___PIPE___/g, '|')] = v; // restore | from __
       });
       apiResults = { ...restored, ...apiResults };
     }
@@ -1125,8 +1125,7 @@ function getMatchResult(match) {
   return apiResults[match.home + '|' + match.away] || null;
 }
 
-function safeKey(k) { return k.replace(/[|.#$\[\]\/]/g, '__'); }
-
+function safeKey(k) { return k.replace(/\|/g, '___PIPE___'); }
 function setSyncStatus(status, label) {
   ['sync-dot','sync-dot-admin'].forEach(id => {
     const el = document.getElementById(id);
@@ -1478,7 +1477,7 @@ function renderManualResultsList() {
   }
   c.innerHTML = '<div class="card-title" style="margin-bottom:.5rem">Resultados cargados manualmente</div>' +
     entries.map(([key, r]) => {
-      const normalized = key.replace(/__/g, '|');
+      const normalized = key.replace(/___PIPE___/g, '|');
       const [home, away] = normalized.split('|');
       return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
         <span>${home} <strong style="color:var(--gold)">${r.h} - ${r.a}</strong> ${away}</span>
