@@ -1478,7 +1478,8 @@ function renderManualResultsList() {
   }
   c.innerHTML = '<div class="card-title" style="margin-bottom:.5rem">Resultados cargados manualmente</div>' +
     entries.map(([key, r]) => {
-      const [home, away] = key.split('|');
+      const normalized = key.replace(/__/g, '|');
+      const [home, away] = normalized.split('|');
       return `<div style="display:flex;justify-content:space-between;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:13px">
         <span>${home} <strong style="color:var(--gold)">${r.h} - ${r.a}</strong> ${away}</span>
         <button class="btn-secondary" style="padding:4px 10px;font-size:12px;color:#f87171;border-color:rgba(239,68,68,.3)" onclick="deleteManualResult('${key}')">Borrar</button>
