@@ -181,6 +181,36 @@
   .pin-key.confirm { background: var(--gold); color: #000; border-color: var(--gold); font-size: 14px; font-weight: 700; }
   .pin-key.confirm:hover { background: var(--gold2); }
 
+
+  /* WINNER STYLES */
+  .winner-modal { display:none; position:fixed; inset:0; background:rgba(0,0,0,.92); z-index:999; align-items:center; justify-content:center; padding:1rem; }
+  .winner-modal.active { display:flex; }
+  .winner-box { background:linear-gradient(135deg,#1a1a2e,#16213e); border:2px solid var(--gold); border-radius:20px; padding:2.5rem 2rem; max-width:380px; width:100%; text-align:center; position:relative; overflow:hidden; }
+  .winner-box::before { content:''; position:absolute; inset:0; background:radial-gradient(circle at 50% 0%, rgba(245,200,66,.15) 0%, transparent 60%); pointer-events:none; }
+  .winner-trophy { font-size:4rem; margin-bottom:.5rem; animation: bounce 1s ease infinite alternate; }
+  @keyframes bounce { from{transform:translateY(0)} to{transform:translateY(-12px)} }
+  .winner-title { font-family:'Bebas Neue',sans-serif; font-size:1rem; letter-spacing:.2em; color:var(--muted); margin-bottom:.25rem; }
+  .winner-name { font-family:'Bebas Neue',sans-serif; font-size:3.5rem; color:var(--gold); line-height:1; margin-bottom:.5rem; text-shadow: 0 0 30px rgba(245,200,66,.5); }
+  .winner-pts { font-size:1.1rem; color:var(--muted); margin-bottom:1.5rem; }
+  .winner-pts strong { color:var(--text); font-size:1.4rem; }
+  .podium-row { display:flex; justify-content:center; gap:12px; margin-bottom:1.5rem; flex-wrap:wrap; }
+  .podium-item { background:rgba(255,255,255,.05); border:1px solid var(--border); border-radius:10px; padding:8px 12px; font-size:13px; min-width:80px; }
+  .podium-item .pos { font-size:1.2rem; display:block; margin-bottom:2px; }
+  .podium-item .pname { font-weight:600; color:var(--text); display:block; }
+  .podium-item .ppts { color:var(--muted); font-size:12px; }
+  .descalificado { background:rgba(239,68,68,.08); border:1px solid rgba(239,68,68,.3); border-radius:10px; padding:8px 12px; font-size:12px; color:#f87171; margin-bottom:1rem; }
+  .confetti-container { position:fixed; inset:0; pointer-events:none; z-index:998; overflow:hidden; }
+  .confetti-piece { position:absolute; width:10px; height:10px; top:-10px; opacity:0; animation: confetti-fall linear forwards; }
+  @keyframes confetti-fall {
+    0% { transform:translateY(0) rotate(0deg); opacity:1; }
+    100% { transform:translateY(105vh) rotate(720deg); opacity:0; }
+  }
+  .winner-banner { background:linear-gradient(135deg,#1a1200,#2a1f00,#1a1200); border-bottom:2px solid var(--gold); padding:12px 1rem; text-align:center; display:flex; align-items:center; justify-content:center; gap:12px; cursor:pointer; }
+  .winner-banner-trophy { font-size:1.5rem; animation:bounce 1.2s ease infinite alternate; }
+  .winner-banner-text { font-family:'Bebas Neue',sans-serif; font-size:1.1rem; letter-spacing:.08em; color:var(--gold); }
+  .winner-banner-text span { color:var(--text); }
+  .winner-banner-sub { font-size:12px; color:var(--muted); }
+
   @media(max-width:480px) {
     .team-name { font-size: 11px; }
     .score-pair input[type=number] { width: 32px; font-size: 14px; }
@@ -249,6 +279,49 @@
     <span>🎯 Ganador/empate <strong>+1 pt</strong></span>
   </div>
 </header>
+
+
+<!-- WINNER BANNER -->
+<div class="winner-banner" onclick="showWinnerModal()">
+  <div class="winner-banner-trophy">🏆</div>
+  <div>
+    <div class="winner-banner-text">CAMPEÓN: <span>FRANCO</span> — 66 pts</div>
+    <div class="winner-banner-sub">Tocá para ver el podio completo</div>
+  </div>
+  <div class="winner-banner-trophy">🏆</div>
+</div>
+
+<!-- CONFETTI -->
+<div class="confetti-container" id="confetti-container"></div>
+
+<!-- WINNER MODAL -->
+<div class="winner-modal" id="winner-modal">
+  <div class="winner-box">
+    <div class="winner-trophy">🏆</div>
+    <div class="winner-title">CAMPEÓN DEL PRODE</div>
+    <div class="winner-name">FRANCO</div>
+    <div class="winner-pts"><strong>66 puntos</strong> · 72/72 pronósticos</div>
+    <div class="podium-row">
+      <div class="podium-item">
+        <span class="pos">🥈</span>
+        <span class="pname">Guido</span>
+        <span class="ppts">60 pts</span>
+      </div>
+      <div class="podium-item" style="border-color:rgba(245,200,66,.4);background:rgba(245,200,66,.06)">
+        <span class="pos">🥇</span>
+        <span class="pname">Franco</span>
+        <span class="ppts">66 pts</span>
+      </div>
+      <div class="podium-item">
+        <span class="pos">🥉</span>
+        <span class="pname">Ricki</span>
+        <span class="ppts">55 pts</span>
+      </div>
+    </div>
+    <div class="descalificado">🚫 Agus — Descalificado por trampa 😂</div>
+    <button class="btn-primary" style="width:100%" onclick="closeWinnerModal()">¡Felicitaciones Franco! 🎉</button>
+  </div>
+</div>
 
 <div class="tab-bar">
   <button class="tab-btn active" onclick="showTab('jugador',this)">⚽ Jugador</button>
@@ -1069,6 +1142,45 @@ function showMsg(tab, text, type) {
   if (!el) return;
   el.textContent = text; el.className = 'msg '+type; el.style.display = 'block';
   setTimeout(() => el.style.display = 'none', 4000);
+}
+
+
+// ─── WINNER CELEBRATION ──────────────────────
+const WINNER_SEEN_KEY = 'prode_hermanos_winner_seen';
+
+function showWinnerModal() {
+  document.getElementById('winner-modal').classList.add('active');
+  launchConfetti();
+}
+
+function closeWinnerModal() {
+  document.getElementById('winner-modal').classList.remove('active');
+  localStorage.setItem(WINNER_SEEN_KEY, '1');
+}
+
+function launchConfetti() {
+  const container = document.getElementById('confetti-container');
+  container.innerHTML = '';
+  const colors = ['#f5c842','#ffffff','#4ade80','#60a5fa','#f87171','#e8b820'];
+  for (let i = 0; i < 80; i++) {
+    const piece = document.createElement('div');
+    piece.className = 'confetti-piece';
+    const color = colors[Math.floor(Math.random() * colors.length)];
+    const left = Math.random() * 100;
+    const duration = 2 + Math.random() * 3;
+    const delay = Math.random() * 2;
+    const size = 6 + Math.random() * 10;
+    const borderRadius = Math.random() > 0.5 ? '50%' : '2px';
+    piece.style.cssText = `left:${left}%;width:${size}px;height:${size}px;background:${color};border-radius:${borderRadius};animation-duration:${duration}s;animation-delay:${delay}s;`;
+    container.appendChild(piece);
+  }
+  setTimeout(() => container.innerHTML = '', 5500);
+}
+
+if (!localStorage.getItem(WINNER_SEEN_KEY)) {
+  document.addEventListener('DOMContentLoaded', () => {
+    setTimeout(() => showWinnerModal(), 800);
+  });
 }
 
 // ─── INIT ────────────────────────────────────
